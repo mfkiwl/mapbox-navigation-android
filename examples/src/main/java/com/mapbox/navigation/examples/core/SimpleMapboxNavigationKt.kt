@@ -297,6 +297,8 @@ class SimpleMapboxNavigationKt :
             Timber.d("route progress %s", routeProgress.toString())
             navigationMapboxMap.onNewRouteProgress(routeProgress)
 
+            routeProgress.upcomingRouteAlerts.firstOrNull()?.
+
             when (val maneuver = routeProgress.upcomingRouteAlerts.firstOrNull()?.routeAlert) {
                 is TunnelEntranceAlert -> {
                     maneuver.alertGeometry?

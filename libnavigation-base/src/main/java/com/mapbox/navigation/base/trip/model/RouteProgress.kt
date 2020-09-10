@@ -71,9 +71,10 @@ class RouteProgress private constructor(
         .durationRemaining(durationRemaining)
         .fractionTraveled(fractionTraveled)
         .remainingWaypoints(remainingWaypoints)
+        .upcomingRouteAlerts(upcomingRouteAlerts)
 
     /**
-     * Regenerate whenever a change is made
+     * Indicates whether some other object is "equal to" this one.
      */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -94,12 +95,13 @@ class RouteProgress private constructor(
         if (durationRemaining != other.durationRemaining) return false
         if (fractionTraveled != other.fractionTraveled) return false
         if (remainingWaypoints != other.remainingWaypoints) return false
+        if (upcomingRouteAlerts != other.upcomingRouteAlerts) return false
 
         return true
     }
 
     /**
-     * Regenerate whenever a change is made
+     * Returns a hash code value for the object.
      */
     override fun hashCode(): Int {
         var result = route.hashCode()
@@ -115,6 +117,7 @@ class RouteProgress private constructor(
         result = 31 * result + durationRemaining.hashCode()
         result = 31 * result + fractionTraveled.hashCode()
         result = 31 * result + remainingWaypoints
+        result = 31 * result + upcomingRouteAlerts.hashCode()
         return result
     }
 
@@ -136,6 +139,7 @@ class RouteProgress private constructor(
             "durationRemaining=$durationRemaining, " +
             "fractionTraveled=$fractionTraveled, " +
             "remainingWaypoints=$remainingWaypoints" +
+            "upcomingRouteAlerts=$upcomingRouteAlerts" +
             ")"
     }
 
@@ -260,6 +264,9 @@ class RouteProgress private constructor(
          */
         fun remainingWaypoints(remainingWaypoints: Int): Builder =
             apply { this.remainingWaypoints = remainingWaypoints }
+
+        fun upcomingRouteAlerts(upcomingRouteAlerts: List<UpcomingRouteAlert>): Builder =
+            apply { this.upcomingRouteAlerts = upcomingRouteAlerts }
 
         /**
          * Build new instance of [RouteProgress]
