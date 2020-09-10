@@ -299,8 +299,7 @@ class SimpleMapboxNavigationKt :
 
             when (val maneuver = routeProgress.upcomingRouteAlerts.firstOrNull()?.routeAlert) {
                 is TunnelEntranceAlert -> {
-                    maneuver.length
-                    maneuver.metadata.tunnelName
+                    maneuver.alertGeometry?
                 }
             }
         }
