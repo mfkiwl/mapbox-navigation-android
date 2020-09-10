@@ -5,6 +5,7 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.VoiceInstructions
 import com.mapbox.geojson.Geometry
 import com.mapbox.geojson.Point
+import com.mapbox.navigation.base.trip.model.alert.UpcomingRouteAlert
 
 /**
  * This class contains all progress information at any given time during a navigation session. This
@@ -50,7 +51,8 @@ class RouteProgress private constructor(
     val distanceTraveled: Float,
     val durationRemaining: Double,
     val fractionTraveled: Float,
-    val remainingWaypoints: Int
+    val remainingWaypoints: Int,
+    val upcomingRouteAlerts: List<UpcomingRouteAlert>
 ) {
 
     /**
@@ -155,6 +157,7 @@ class RouteProgress private constructor(
         private var durationRemaining: Double = 0.0
         private var fractionTraveled: Float = 0f
         private var remainingWaypoints: Int = 0
+        private var upcomingRouteAlerts: List<UpcomingRouteAlert> = emptyList()
 
         /**
          * Current [DirectionsRoute] geometry with a buffer
@@ -278,7 +281,8 @@ class RouteProgress private constructor(
                 distanceTraveled,
                 durationRemaining,
                 fractionTraveled,
-                remainingWaypoints
+                remainingWaypoints,
+                upcomingRouteAlerts
             )
         }
     }

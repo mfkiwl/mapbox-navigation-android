@@ -8,6 +8,7 @@ import com.mapbox.navigation.base.options.DeviceProfile
 import com.mapbox.navigator.BannerInstruction
 import com.mapbox.navigator.NavigationStatus
 import com.mapbox.navigator.NavigatorConfig
+import com.mapbox.navigator.RouteInfo
 import com.mapbox.navigator.RouterResult
 import com.mapbox.navigator.SensorData
 import com.mapbox.navigator.TilesConfig
@@ -86,7 +87,7 @@ interface MapboxNativeNavigator {
     suspend fun setRoute(
         route: DirectionsRoute?,
         legIndex: Int = INDEX_FIRST_LEG
-    ): Boolean
+    ): RouteInfo?
 
     /**
      * Updates annotations so that subsequent calls to getStatus will

@@ -29,6 +29,7 @@ import com.mapbox.navigator.BannerSection
 import com.mapbox.navigator.NavigationStatus
 import com.mapbox.navigator.Navigator
 import com.mapbox.navigator.NavigatorConfig
+import com.mapbox.navigator.RouteInfo
 import com.mapbox.navigator.RouteState
 import com.mapbox.navigator.RouterResult
 import com.mapbox.navigator.SensorData
@@ -150,7 +151,7 @@ object MapboxNativeNavigatorImpl : MapboxNativeNavigator {
     override suspend fun setRoute(
         route: DirectionsRoute?,
         legIndex: Int
-    ): Boolean =
+    ): RouteInfo? =
         withContext(NavigatorDispatcher) {
             MapboxNativeNavigatorImpl.route = route
             val result = navigator!!.setRoute(

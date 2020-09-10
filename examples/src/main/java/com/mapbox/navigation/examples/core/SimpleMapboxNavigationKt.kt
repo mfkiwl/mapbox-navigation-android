@@ -39,6 +39,7 @@ import com.mapbox.navigation.base.internal.extensions.applyDefaultParams
 import com.mapbox.navigation.base.internal.extensions.coordinates
 import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.base.trip.model.RouteProgress
+import com.mapbox.navigation.base.trip.model.alert.TunnelEntranceAlert
 import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.directions.session.RoutesObserver
 import com.mapbox.navigation.core.directions.session.RoutesRequestCallback
@@ -295,6 +296,13 @@ class SimpleMapboxNavigationKt :
         override fun onRouteProgressChanged(routeProgress: RouteProgress) {
             Timber.d("route progress %s", routeProgress.toString())
             navigationMapboxMap.onNewRouteProgress(routeProgress)
+
+            when (val maneuver = routeProgress.upcomingRouteAlerts.firstOrNull()?.routeAlert) {
+                is TunnelEntranceAlert -> {
+                    maneuver.length
+                    maneuver.metadata.tunnelName
+                }
+            }
         }
     }
 
