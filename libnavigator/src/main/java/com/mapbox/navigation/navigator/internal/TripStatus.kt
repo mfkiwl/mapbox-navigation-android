@@ -18,6 +18,5 @@ data class TripStatus(
     val enhancedLocation: Location,
     val keyPoints: List<Location>,
     val routeProgress: RouteProgress?,
-    val offRoute: Boolean,
-    val upcomingRouteAlerts: List<UpcomingRouteAlert>
+    val offRoute: Boolean
 )

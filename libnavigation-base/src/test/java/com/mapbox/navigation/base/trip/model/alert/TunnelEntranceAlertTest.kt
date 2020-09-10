@@ -13,7 +13,7 @@ class TunnelEntranceAlertTest : BuilderTest<TunnelEntranceAlert, TunnelEntranceA
         Point.fromLngLat(10.0, 20.0),
         123.0
     ).alertGeometry(
-        RouteAlertGeometry(
+        RouteAlertGeometry.Builder(
             456.0,
             Point.fromLngLat(11.0, 22.0),
             1,
@@ -21,7 +21,7 @@ class TunnelEntranceAlertTest : BuilderTest<TunnelEntranceAlert, TunnelEntranceA
             Point.fromLngLat(33.0, 44.0),
             3,
             4
-        )
+        ).build()
     )
 
     @Test

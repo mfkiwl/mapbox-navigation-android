@@ -19,6 +19,9 @@ import com.mapbox.navigation.base.trip.model.RouteLegProgress
 import com.mapbox.navigation.base.trip.model.RouteProgress
 import com.mapbox.navigation.base.trip.model.RouteProgressState
 import com.mapbox.navigation.base.trip.model.RouteStepProgress
+import com.mapbox.navigation.base.trip.model.alert.RouteAlertGeometry
+import com.mapbox.navigation.base.trip.model.alert.TunnelEntranceAlert
+import com.mapbox.navigation.base.trip.model.alert.UpcomingRouteAlert
 import com.mapbox.navigation.navigator.ActiveGuidanceOptionsMapper
 import com.mapbox.navigation.navigator.ifNonNull
 import com.mapbox.navigation.navigator.toFixLocation
@@ -29,11 +32,13 @@ import com.mapbox.navigator.BannerSection
 import com.mapbox.navigator.NavigationStatus
 import com.mapbox.navigator.Navigator
 import com.mapbox.navigator.NavigatorConfig
+import com.mapbox.navigator.PassiveManeuverType
 import com.mapbox.navigator.RouteInfo
 import com.mapbox.navigator.RouteState
 import com.mapbox.navigator.RouterResult
 import com.mapbox.navigator.SensorData
 import com.mapbox.navigator.TilesConfig
+import com.mapbox.navigator.UpcomingPassiveManeuver
 import com.mapbox.navigator.VoiceInstruction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -428,6 +433,8 @@ object MapboxNativeNavigatorImpl : MapboxNativeNavigator {
 
             routeProgressBuilder.voiceInstructions(voiceInstruction?.mapToDirectionsApi())
 
+            routeProgressBuilder.upcomingRouteAlerts(upcomingPassiveManeuvers.toRouteAlerts())
+
             return routeProgressBuilder.build()
         }
         return null
@@ -479,6 +486,43 @@ object MapboxNativeNavigatorImpl : MapboxNativeNavigator {
             .ssmlAnnouncement(this.ssmlAnnouncement)
             .build()
     }
+}
+
+private val SUPPORTED_PASSIVE_MANEUVERS = arrayOf(
+    PassiveManeuverType.KTUNNEL_ENTRANCE
+)
+
+private fun List<UpcomingPassiveManeuver>.toRouteAlerts(): List<UpcomingRouteAlert> {
+    return this.filter { SUPPORTED_PASSIVE_MANEUVERS.contains(it.maneuver.type) }
+        .map { upcomingManeuver ->
+            val maneuver = upcomingManeuver.maneuver
+            val routeAlert = when (maneuver.type) {
+                PassiveManeuverType.KTUNNEL_ENTRANCE -> {
+                    val metadata = TunnelEntranceAlert.Metadata.Builder()
+                        .tunnelName(maneuver.tunnel_name)
+                        .build()
+                    val alertGeometry =
+                        ifNonNull(maneuver.length /*todo add rest of geometry values (start point, shapes, etc)*/) { length ->
+                            RouteAlertGeometry.Builder(
+                                length,
+                                Point.fromLngLat(0.0, 0.0),
+                                0,
+                                0,
+                                Point.fromLngLat(0.0, 0.0),
+                                0,
+                                0
+                            ).build()
+                        }
+                    TunnelEntranceAlert.Builder(
+                        metadata,
+                        maneuver.coordinate,
+                        maneuver.distance
+                    ).alertGeometry(alertGeometry).build()
+                }
+                else -> throw IllegalArgumentException("not supported type: ${maneuver.type}")
+            }
+            UpcomingRouteAlert.Builder(routeAlert, upcomingManeuver.remainingDistance).build()
+        }
 }
 
 private fun RouteState.convertState(): RouteProgressState {
